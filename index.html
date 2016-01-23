@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Razor Slider</title>
+        <meta name="description" content="A Simple Slider">
+        <link rel="stylesheet" href="css/razor.slider.css" />
+        <style>
+            #rslide{
+                width:800px;
+                height: 500px;
+            }
+        </style>
+    </head>
+    <body>
+     
+        <div>
+        <ul id="rslide">
+            <li><img src="images/1.jpg" alt="1.jpg"/></li>
+            <li><img src="images/2.jpg" alt="2.jpg"/></li>
+            <li><img src="images/3.jpg" alt="3.jpg"/></li>
+            <li>fgdfgd</li>
+            <li><img src="images/5.jpg" alt="5.jpg"/></li>
+            <li><img src="images/5.jpg" alt="5.jpg"/></li>
+        </ul>
+  
+        
+    <script src="js/jquery-1.12.0.min.js"></script>    
+    <script src="js/razor.jquery.js"></script>
+    <script>
+        $(function(){
+            $("#rslide").razorslide({
+               autoplay:false,
+                indicators:true,
+                controls:true,
+                onSlide:function(c){console.log(c.index());}
+            });
+        });    
+    </script>
+    </body>
+</html>
