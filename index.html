@@ -16,7 +16,7 @@
     </head>
     <body>
      
-        <div>
+       
         <ul id="rslide">
             <li><img src="images/1.jpg" alt="1.jpg"/></li>
             <li><img src="images/2.jpg" alt="2.jpg"/></li>
@@ -32,7 +32,7 @@
     <script>
         $(function(){
             $("#rslide").razorslider({
-               autoplay:false,
+               autoplay:true,
                 indicators:true,
                 controls:true,
                 onSlide:function(c){console.log(c.index());}
