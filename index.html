@@ -8,35 +8,35 @@
         <meta name="description" content="A Simple Slider">
         <link rel="stylesheet" href="css/razor.slider.css" />
         <style>
-            #rslide{
-                width:800px;
-                height: 500px;
-            }
+            
         </style>
     </head>
     <body>
      
-       
-        <ul id="rslide">
-            <li><img src="images/1.jpg" alt="1.jpg"/></li>
-            <li><img src="images/2.jpg" alt="2.jpg"/></li>
-            <li><img src="images/3.jpg" alt="3.jpg"/></li>
-            <li><h1>Text Slide</h1></li>
-            <li><img src="images/5.jpg" alt="5.jpg"/></li>
-            <li><img src="images/5.jpg" alt="5.jpg"/></li>
-        </ul>
-  
+        <div style="width:1000px;margin:0 auto;">
+            <ul class="razor-slider">
+                <li><img src="images/1.jpg" alt="1.jpg"/></li>
+                <li><img width="200" height="200" src="images/2.jpg" alt="2.jpg"/></li>
+                <li><img src="images/3.jpg" alt="3.jpg"/></li>
+                <li><img src="images/4.jpg" alt="4.jpg"/></li>
+                <li><img src="images/5.jpg" alt="5.jpg"/></li>
+                <li><img src="images/5.jpg" alt="5.jpg"/></li>
+            </ul>
+        </div>
+        
         
     <script src="js/jquery-1.12.0.min.js"></script>    
     <script src="js/razor.slider.jquery.js"></script>
     <script>
         $(function(){
-            $("#rslide").razorslider({
+            $(".razor-slider").razorslider({
                autoplay:true,
                 indicators:true,
                 controls:true,
-                onSlide:function(c){console.log(c.index());}
+                imageSize:'auto',
+
             });
+        
         });    
     </script>
     </body>

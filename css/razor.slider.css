@@ -48,22 +48,29 @@ table {
 }
 /*******************************************************************************************/
 
-.razor-slider{
-    position: relative;
-    overflow: hidden;
-    margin: 0 auto 0 auto;
-    border-radius: 4px;
-    height:auto;
-    width:100%;
+.razor-slider-wrapper{
+      position: relative;
+        margin: 0 auto;
 }
 
 .razor-item-wrapper{
   position: relative;
   margin: 0;
   padding: 0;
-  height: 300px;
+  height: auto;
+  overflow: hidden;
   list-style: none;
 }
+
+.razor-slider{
+    position: relative;
+   overflow: hidden;
+    margin: 0 auto 0 auto;
+    border-radius: 4px;
+    height:auto;
+    width:100%;
+}
+
 
 .razor-item{
   position: relative;
@@ -71,22 +78,20 @@ table {
   float: left;
   margin: 0;
   padding: 0;
-/*  width: 500px;
-  height: 300px;*/
-      max-width: 100%;
+  max-width: 100%;
   height: auto;
-  background: #ccc;
+  background: #fff;
   text-align: center;
-  line-height: 300px;
 }
 
-.razor-item img{
+.razor-item img,.razor-item iframe{
   display: block;
   max-width: 100%;
-  height: auto
+  height: auto;
+  margin:auto auto;
 }
 
-.razor-slider .razor-right-nav,.razor-slider .razor-left-nav{
+.razor-slider-wrapper .razor-right-nav,.razor-slider-wrapper .razor-left-nav{
       position: absolute;
       top: 40%;
       z-index: 999;
@@ -103,11 +108,11 @@ table {
       cursor: pointer;
 }
 
-.razor-slider .razor-left-nav{
+.razor-slider-wrapper .razor-left-nav{
     border-radius: 0 2px 2px 0;
 }
 
-.razor-slider .razor-right-nav{
+.razor-slider-wrapper .razor-right-nav{
     right: 0;
     border-radius: 2px 0 0 2px;
 }

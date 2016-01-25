@@ -1,24 +1,11 @@
 /*!
- * jQuery lightweight plugin boilerplate
- * Original author: @ajpiano
- * Further changes, comments: @addyosmani
+ * jQuery Razor Slider Plugin
+ * Author: Riaz Laskar
+ * Url : https://github.com/riazXrazor/razor.slider
  * Licensed under the MIT license
  */
 ;(function ( $, window, document, undefined ) {
 
-    
-    // undefined is used here as the undefined global
-    // variable in ECMAScript 3 and is mutable (i.e. it can
-    // be changed by someone else). undefined isn't really
-    // being passed in so we can ensure that its value is
-    // truly undefined. In ES5, undefined can no longer be
-    // modified.
-
-    // window and document are passed through as local
-    // variables rather than as globals, because this (slightly)
-    // quickens the resolution process and can be more
-    // efficiently minified (especially when both are
-    // regularly referenced in your plugin).
 
     // Create the defaults once
     var pluginName = "razorslider",
@@ -31,6 +18,8 @@
            easing:'easeOutQuad',
            controlRight:'&raquo;',
            controlLeft:'&laquo;',
+           sliderType:'image', // image|content
+           imageSize:'auto', //auto|center
            onSlide:null,
            onSlidePost:null
          };
@@ -45,25 +34,27 @@
         
         this.$item = this.$element.find('.razor-item');
         this.$current = null;
-        this.$slideHeight = this.$item.height();
-        this.$slideWidth = this.$item.width();
+        this.$interval = null;
+        this.slideRunnung = true;
+        if(this.options.sliderType === 'image')
+        {
+            this.$slideHeight = this.$item.height();
+            this.$slideWidth = this.$item.width();
+        }
+        else
+        {
+            this.$slideHeight = this.$element.parent().height();
+            this.$slideWidth = this.$element.parent().width();
+        }
         this.$slides = this.$item.length;
-        this.$item.wrapAll('<div class="razor-item-wrapper" />');
-        this.$itemWrapper = $('.razor-item-wrapper');
-        this.$itemWrapperWidth = this.$slides * this.$slideWidth;
-        
-       
-        
-        this.$element.css({ width: this.$slideWidth, height: this.$slideHeight });
-	
-	    this.$itemWrapper.css({ width: this.$itemWrapperWidth, marginLeft: 0 });
         
         
         
 
         this._defaults = defaults;
         this._name = pluginName;
-
+ 
+        this.setup();
         this.init();
     }
 
@@ -74,12 +65,14 @@
             
             self.$element.find('.razor-item').css({height:self.$slideHeight+'px',width:self.$slideWidth+'px'});
             
-            self.$element.on('click','.razor-left-nav',function(){
+            self.$sliderWrapper.on('click','.razor-left-nav',function(e){
                    self.slideLeft();
+                 e.preventDefault();
                });
 
-            self.$element.on('click','.razor-right-nav',function(){
+            self.$sliderWrapper.on('click','.razor-right-nav',function(e){
                    self.slideRight();
+                  e.preventDefault();
                });
             
             
@@ -93,7 +86,7 @@
             if(self.options.indicators)
             {
               self.generateIndicators();
-              self.$element.on('click','.razor-indicator',function(){
+              self.$sliderWrapper.on('click','.razor-indicator',function(){
               self.movetoSlide($(this).data('slide-to'));
             });
             }
@@ -112,79 +105,142 @@
             //self.setStartSlide();
             
         },
+        setup:function(){
+             var self = this;
+            
+            this.$element.wrap('<div class="razor-item-wrapper" />');
+            this.$itemWrapper = this.$element.closest('.razor-item-wrapper');
+            this.$itemWrapperWidth = this.$slides * this.$slideWidth;
+
+
+
+            this.$itemWrapper.wrap('<div class="razor-slider-wrapper" />');
+            this.$sliderWrapper = this.$element.closest('.razor-slider-wrapper');
+
+
+
+            this.$itemWrapper.css({ width: this.$slideWidth+'px', height: this.$slideHeight+'px' });
+            this.$sliderWrapper.css({ width: this.$slideWidth+'px', height: this.$slideHeight+'px' });
+
+            this.$element.css({ width: this.$itemWrapperWidth, marginLeft: 0 });
+           
+            
+            this.$item.each(function(){
+                if($(this).find('img').length)
+                {
+                   
+                        if($(this).find('img,iframe').width() < self.$slideWidth)
+                        {
+                            if(self.options.imageSize == 'center')
+                            {
+                                $(this).find('img,iframe').css({
+                                    position:'absolute',
+                                    top:0,
+                                    left:0,
+                                    right:0,
+                                    bottom:0,
+                                    margin:'auto auto'
+                                });
+                            }
+                            else
+                            {
+                                $(this).find('img,iframe').css('width',self.$slideWidth+'px');
+                            }
+                            
+                        } 
+                   
+                   
+                    
+
+                }
+                else
+                {
+
+                }
+            });
+        }
+        ,
 
         slideLeft: function() {
-            var self = this;
-            var pos;
-            
-            if(typeof self.options.onSlide === 'function')
+            var self = this, 
+                pos;
+            /*if(self.slideRunnung)
             {
-                self.options.onSlide(self.$current,self.$element)
-            }
-            
-            if(self.$current.index() === 0)
-            {
-               
-              self.$current.removeClass('active')
-              self.$element.find('.razor-item').last().addClass('active');
-            }
-            else
-            {
-                self.$current.removeClass('active').prev().addClass('active');
-            }
-            self.getActiveSlide();
-            pos = self.$current.index() * self.$slideWidth;
-            self.$itemWrapper.animate({
-            marginLeft: - pos
-        },self.options.speed,self.options.easing, function () {
-                 
-            if(typeof self.options.onSlidePost === 'function')
-            {
-                self.options.onSlide(self.$current,self.$element)
-            }
-             
-        });
+                self.slideRunnung = false;*/
+                if(typeof self.options.onSlide === 'function')
+                {
+                    self.options.onSlide(self.$current,self.$element)
+                }
+
+                if(self.$current.index() === 0)
+                {
+
+                  self.$current.removeClass('active')
+                  self.$element.find('.razor-item').last().addClass('active');
+                }
+                else
+                {
+                    self.$current.removeClass('active').prev().addClass('active');
+                }
+                self.getActiveSlide();
+                pos = self.$current.index() * self.$slideWidth;
+                self.$element.animate({
+                marginLeft: - pos
+            },self.options.speed,self.options.easing, function () {
+
+                if(typeof self.options.onSlidePost === 'function')
+                {
+                    self.options.onSlide(self.$current,self.$element)
+                }
+                   /* self.slideRunnung = true;*/
+            });
+          /*}*/
         },
         
         slideRight: function(){
-            var self = this;
-            var pos;
-            if(typeof self.options.onSlide === 'function')
+            var self = this,
+                pos;
+            /*if(self.slideRunnung)
             {
-                self.options.onSlide(self.$current,self.$element)
-            }
-            if(self.$current.index()+1 === self.$slides)
-            {
-               
-              self.$current.removeClass('active')
-              self.$element.find('.razor-item').first().addClass('active');
-            }
-            else
-            {
-                self.$current.removeClass('active').next().addClass('active');
-            }
-            self.getActiveSlide();
-            pos = self.$current.index() * self.$slideWidth;
-            self.$itemWrapper.animate({
-            marginLeft: - pos
-        },self.options.speed,self.options.easing, function () {
+                self.slideRunnung = false;*/
+                if(typeof self.options.onSlide === 'function')
+                {
+                    self.options.onSlide(self.$current,self.$element)
+                }
+                if(self.$current.index()+1 === self.$slides)
+                {
 
-            if(typeof self.options.onSlidePost === 'function')
-            {
-                self.options.onSlide(self.$current,self.$element)
-            }
-        });
+                  self.$current.removeClass('active')
+                  self.$element.find('.razor-item').first().addClass('active');
+                }
+                else
+                {
+                    self.$current.removeClass('active').next().addClass('active');
+                }
+                self.getActiveSlide();
+                pos = self.$current.index() * self.$slideWidth;
+                self.$element.animate({
+                marginLeft: - pos
+            },self.options.speed,self.options.easing, function () {
+
+                if(typeof self.options.onSlidePost === 'function')
+                {
+                    self.options.onSlide(self.$current,self.$element)
+                }
+               /* self.slideRunnung = true;*/
+            });
+         /* }*/
         },
         
      autoPlay:function(){
             var self = this;
-            setInterval(function () {
+           self.$interval = setInterval(function () {
                 self.slideRight();
             }, self.options.autoplaySpeed);
         },
      generateControls:function(){
          var self = this;
-         self.$element.append('<a href="#" class="razor-right-nav">'+self.options.controlRight+'</a><a href="#" class="razor-left-nav">'+self.options.controlLeft+'</a>');
+         self.$sliderWrapper.append('<a href="#" class="razor-right-nav">'+self.options.controlRight+'</a><a href="#" class="razor-left-nav">'+self.options.controlLeft+'</a>');
      },
      generateIndicators:function(){
          var self = this,html = $('<ul />').addClass('razor-indicator-wrapper');
@@ -193,7 +249,7 @@
              $('<li />').addClass('razor-indicator').text(index).attr('data-slide-to',index).appendTo(html);
          });
          
-         self.$element.append(html);
+         self.$sliderWrapper.append(html);
      },
     getActiveSlide:function(){
         var self = this;
@@ -220,7 +276,7 @@
     setIndicator : function(){
         var self = this;
         if(self.$current)
-        $('.razor-indicator').removeClass('razor-indicator-active').eq(self.$current.index()).addClass('razor-indicator-active');
+        self.$sliderWrapper.find('.razor-indicator').removeClass('razor-indicator-active').eq(self.$current.index()).addClass('razor-indicator-active');
     },
     
     movetoSlide : function(index){
@@ -230,7 +286,7 @@
         self.$element.find('.razor-item').removeClass('active')
         self.$element.find('.razor-item').eq(index).addClass('active');
         self.getActiveSlide();
-        self.$itemWrapper.animate({
+        self.$element.animate({
         marginLeft: -pos
         }, self.options.speed, function () {
 
@@ -420,8 +476,6 @@ $.extend( $.easing,
  */
     
     
-    // A really lightweight plugin wrapper around the constructor,
-    // preventing against multiple instantiations
     $.fn[pluginName] = function ( options ) {
         return this.each(function () {
             if (!$.data(this, "plugin_" + pluginName)) {
