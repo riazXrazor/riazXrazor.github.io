@@ -6,30 +6,6 @@
  */
 ;(function ( $, window, document, undefined ) {
 
-/**
-* range Get an array of numbers within a range
-* @param min {number} Lowest number in array
-* @param max {number} Highest number in array
-* @param rand {bool} Shuffle array
-* @return {array}
-*/
-function range( min, max, rand ) {
-  var arr = ( new Array( ++max - min ) )
-    .join('.').split('.')
-    .map(function( v,i ){ return min + i });
-  return rand
-    ? arr.map(function( v ) { return [ Math.random(), v ] })
-       .sort().map(function( v ) { return v[ 1 ] })
-    : arr;
-}
-
-/**
- * Returns a random integer between min (inclusive) and max (inclusive)
- * Using Math.round() will give you a non-uniform distribution!
- */
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
     // Create the defaults once
     var pluginName = "razorslider",
         defaults = {
@@ -211,17 +187,20 @@ function getRandomInt(min, max) {
                 });
             }
             
-            if(self.options.transitionEffect == 'flyingBox')
+            if(self.options.transitionEffect == 'flyingBox' 
+               || self.options.transitionEffect == 'randomFlyingBox' 
+               || self.options.transitionEffect == 'fallingBox' 
+               || self.options.transitionEffect == 'fadeBox'
+              )
             {
-                self.$itemWrapper.css({backgroundImage:'url('+self.$current.find('img').attr('src')+')'});
+                self.$itemWrapper.css({
+                    backgroundImage:'url('+self.$current.find('img').attr('src')+')',
+                    backgroundSize: self.$slideWidth+'px '+self.$slideHeight+'px',
+                    backgroundRepeat: 'no-repeat'
+                });
                 self.generateSlices().appendSlices().positionSlices();
             }
             
-            if(self.options.transitionEffect == 'fadeBox')
-            {
-                self.$itemWrapper.css({backgroundImage:'url('+self.$current.find('img').attr('src')+')'});
-                self.generateSlices().appendSlices().positionSlices();
-            }
         },
      generateSlices : function(){
         var self = this,slices = [];
@@ -252,11 +231,11 @@ function getRandomInt(min, max) {
         var self = this;
         self.$itemWrapper.find('.razor-slice').each(function(i,ele) {
               var pos = self.slicePositionsArray[i];
-              $(this).css( {
+              $(this).css({
                   backgroundPosition: -pos.left +'px '+ -pos.top +'px',
                   backgroundSize: self.$slideWidth+'px '+self.$slideHeight+'px',
                   backgroundRepeat: 'no-repeat'
-              } );
+              });
             });
     },
     positionSlices : function(dir){
@@ -277,6 +256,24 @@ function getRandomInt(min, max) {
               var pos = self.slicePositionsArray[i];
               var x = (self.$slideWidth + pos.left);
               var y = pos.top;
+              $(this).css( {position:'absolute','left': x +'px ','top': y +'px'} );
+            });
+         }
+        else if(dir == 'up')
+         {
+          self.$itemWrapper.find('.razor-slice').each(function(i,ele) {
+              var pos = self.slicePositionsArray[i];
+              var x = pos.left;
+              var y = -(self.$slideHeight - pos.top);
+              $(this).css( {position:'absolute','left': x +'px ','top': y +'px'} );
+            });
+         }
+        else if(dir == 'down')
+         {
+          self.$itemWrapper.find('.razor-slice').each(function(i,ele) {
+              var pos = self.slicePositionsArray[i];
+              var x = pos.left;
+              var y = (self.$slideHeight + pos.top);
               $(this).css( {position:'absolute','left': x +'px ','top': y +'px'} );
             });
          }
@@ -366,6 +363,63 @@ function getRandomInt(min, max) {
                     });
                 }); 
               }
+             if(self.options.transitionEffect == 'randomFlyingBox')
+              {
+              self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
+            
+               self.positionSlices('random');
+               self.options.easing = 'easeOutQuint';
+                var randArr = range(0,self.total_slices-1,true);
+            
+                randArr.forEach(function(sliceIndex,index){
+                   var pos = self.slicePositionsArray[sliceIndex];
+                   var animationOn = {
+                            top:pos.top,
+                            left:pos.left
+                        };
+                   var duration = (self.options.speed/self.total_slices)*(index+10);
+                    self.animateSlice(sliceIndex,animationOn,duration,100,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                                self.$itemWrapper.css({
+                                       backgroundImage: ele.css('backgroundImage'),
+                                       backgroundSize:self.$slideWidth+'px '+self.$slideHeight+'px'
+                                });
+                                self.slideRunnung = true; 
+                            self.positionSlices('right');
+                        }
+                    });
+                }); 
+              }
+                
+            if(self.options.transitionEffect == 'fallingBox')
+              {
+              self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
+            
+               self.positionSlices('up');
+               self.options.easing = 'easeOutBounce';
+                var randArr = range(0,self.total_slices-1,true);
+            
+                randArr.forEach(function(sliceIndex,index){
+                   var pos = self.slicePositionsArray[sliceIndex];
+                   var animationOn = {
+                            top:pos.top,
+                            left:pos.left
+                        };
+                   var duration = (self.options.speed/self.total_slices)*(index+10);
+                    self.animateSlice(sliceIndex,animationOn,duration,100,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                                self.$itemWrapper.css({
+                                       backgroundImage: ele.css('backgroundImage'),
+                                       backgroundSize:self.$slideWidth+'px '+self.$slideHeight+'px',
+                                });
+                                self.slideRunnung = true; 
+                            self.positionSlices('right');
+                        }
+                    });
+                }); 
+              }
             if(self.options.transitionEffect == 'fadeBox')
             {
                 self.$itemWrapper.find('.razor-slice').css('opacity',0);
@@ -443,19 +497,72 @@ function getRandomInt(min, max) {
                 self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
                
                 self.positionSlices('left');
-/*                var sh = self.$itemWrapper.find('.razor-slice').height();
-                var sw = self.$itemWrapper.find('.razor-slice').width();
-                self.$itemWrapper.find('.razor-slice').css({height:getRandomInt(0,sh),width:getRandomInt(0,sw)});*/
-            
+        
                 var randArr = range(0,self.total_slices-1,true);
 
                 randArr.forEach(function(sliceIndex,index){
                    var pos = self.slicePositionsArray[sliceIndex];
                    var animationOn = {
                             top:pos.top,
-                            left:pos.left,
-/*                            height:sh+'px',
-                            width:sw+'px',*/
+                            left:pos.left
+                        };
+                   var duration = (self.options.speed/self.total_slices)*(index+10);
+                    self.animateSlice(sliceIndex,animationOn,duration,100,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                                self.$itemWrapper.css({
+                                       backgroundImage: ele.css('backgroundImage'),
+                                       backgroundSize:self.$slideWidth+'px '+self.$slideHeight+'px'
+                                });
+                                self.slideRunnung = true; 
+                            self.positionSlices('left');
+                        }
+                    });
+                });
+            
+            }
+            if(self.options.transitionEffect == 'randomFlyingBox')
+            {
+                self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
+               
+                self.positionSlices('random');
+                self.options.easing = 'easeOutQuint';
+                var randArr = range(0,self.total_slices-1,true);
+
+                randArr.forEach(function(sliceIndex,index){
+                   var pos = self.slicePositionsArray[sliceIndex];
+                   var animationOn = {
+                            top:pos.top,
+                            left:pos.left
+                        };
+                   var duration = (self.options.speed/self.total_slices)*(index+10);
+                    self.animateSlice(sliceIndex,animationOn,duration,100,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                                self.$itemWrapper.css({
+                                       backgroundImage: ele.css('backgroundImage'),
+                                       backgroundSize:self.$slideWidth+'px '+self.$slideHeight+'px'
+                                });
+                                self.slideRunnung = true; 
+                            self.positionSlices('left');
+                        }
+                    });
+                });
+            
+            }
+            if(self.options.transitionEffect == 'fallingBox')
+            {
+                self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
+               
+                self.positionSlices('up');
+                self.options.easing = 'easeOutBounce';
+                var randArr = range(0,self.total_slices-1,true);
+
+                randArr.forEach(function(sliceIndex,index){
+                   var pos = self.slicePositionsArray[sliceIndex];
+                   var animationOn = {
+                            top:pos.top,
+                            left:pos.left
                         };
                    var duration = (self.options.speed/self.total_slices)*(index+10);
                     self.animateSlice(sliceIndex,animationOn,duration,100,function(i,ele){
@@ -509,7 +616,7 @@ function getRandomInt(min, max) {
          var self = this;
          var slide = self.$itemWrapper.find('.razor-slice').eq(sliceIndex);       
          setTimeout(function(){
-                    slide.animate(animateOn,animationDuration,function(){
+                    slide.animate(animateOn,animationDuration,self.options.easing,function(){
                             callback(sliceIndex,slide)
                     });
                
@@ -578,6 +685,34 @@ function getRandomInt(min, max) {
                                                
     };
 
+
+    
+/**
+* range Get an array of numbers within a range
+* @param min {number} Lowest number in array
+* @param max {number} Highest number in array
+* @param rand {bool} Shuffle array
+* @return {array}
+*/
+function range( min, max, rand ) {
+  var arr = ( new Array( ++max - min ) )
+    .join('.').split('.')
+    .map(function( v,i ){ return min + i });
+  return rand
+    ? arr.map(function( v ) { return [ Math.random(), v ] })
+       .sort().map(function( v ) { return v[ 1 ] })
+    : arr;
+}
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+    
+    
 /* ============================================================
  * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
  *
