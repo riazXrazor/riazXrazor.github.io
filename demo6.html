@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Razor Slider</title>
+        <meta name="description" content="A Simple Slider">
+        <link rel="stylesheet" href="css/razor.slider.css" />
+        <style>
+            
+        </style>
+    </head>
+    <body>
+     
+        <div style="width:900px;margin:0 auto;">
+            <ul class="razor-slider">
+                <li><img src="images/1.jpg" alt="1.jpg"/></li>
+                <li><img src="images/2.jpg" alt="2.jpg"/></li>
+                <li><img src="images/3.jpg" alt="3.jpg"/></li>
+                <li><img src="images/4.jpg" alt="3.jpg"/></li>
+                <li><img src="images/5.jpg" alt="5.jpg"/></li>
+            </ul>
+        </div>
+        
+         
+        
+    <script src="js/jquery-1.12.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/plugins/CSSPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/easing/EasePack.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TweenLite.min.js"></script>
+    <script src="js/razor.slider.jquery.exp.js"></script>
+    <script>
+        $(function(){
+            $(".razor-slider").razorslider({
+               autoplay:true,
+                indicators:true,
+                controls:true,
+                imageSize:'auto',
+                autoplaySpeed:4000,
+                speed:1500,
+                transitionEffect:'slidingRows'
+
+            });
+            
+           
+        });    
+    </script>
+    </body>
+</html>

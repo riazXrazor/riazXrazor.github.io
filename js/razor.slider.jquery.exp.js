@@ -187,10 +187,25 @@
                 });
             }
             
+            if( self.options.transitionEffect == 'fallingColumn')
+                {
+                 this.sliceDim.x = 10;
+                 this.sliceDim.y = 1;
+                }
+            if( self.options.transitionEffect == 'slidingRows')
+                {
+                 this.sliceDim.y = 10;
+                 this.sliceDim.x = 1;
+                }
+            
             if(self.options.transitionEffect == 'flyingBox' 
                || self.options.transitionEffect == 'randomFlyingBox' 
                || self.options.transitionEffect == 'fallingBox' 
                || self.options.transitionEffect == 'fadeBox'
+               || self.options.transitionEffect == 'fallingColumn'
+               || self.options.transitionEffect == 'slidingRows'
+               || self.options.transitionEffect == 'scaterBox'
+               || self.options.transitionEffect == 'checkbox'
               )
             {
                 self.$itemWrapper.css({
@@ -521,6 +536,35 @@
                 });
             
             }
+            if(self.options.transitionEffect == 'slidingRows')
+            {
+                self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
+               
+                self.positionSlices('left');
+        
+                var randArr = range(0,self.total_slices-1,false);
+
+                randArr.forEach(function(sliceIndex,index){
+                   var pos = self.slicePositionsArray[sliceIndex];
+                   var animationOn = {
+                            top:pos.top,
+                            left:pos.left
+                        };
+                   var duration = (self.options.speed/self.total_slices)*(index+10);
+                    self.animateSlice(sliceIndex,animationOn,duration,duration,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                                self.$itemWrapper.css({
+                                       backgroundImage: ele.css('backgroundImage'),
+                                       backgroundSize:self.$slideWidth+'px '+self.$slideHeight+'px'
+                                });
+                                self.slideRunnung = true; 
+                            self.positionSlices('left');
+                        }
+                    });
+                });
+            
+            }
             if(self.options.transitionEffect == 'randomFlyingBox')
             {
                 self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
@@ -579,6 +623,35 @@
                 });
             
             }
+                
+            if( self.options.transitionEffect == 'fallingColumn')
+            {
+             self.setImageToSlices(self.$current.find('img').attr('src')).positionImageOnSlices(); 
+               
+                self.positionSlices('up');
+               /// self.options.easing = 'easeOutBounce';
+                var randArr = range(0,self.total_slices-1,false);
+
+                randArr.forEach(function(sliceIndex,index){
+                   var pos = self.slicePositionsArray[sliceIndex];
+                   var animationOn = {
+                            top:pos.top,
+                            left:pos.left
+                        };
+                   var duration = (self.options.speed/self.total_slices)*(index+10) ;
+                    self.animateSlice(sliceIndex,animationOn,duration,duration,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                                self.$itemWrapper.css({
+                                       backgroundImage: ele.css('backgroundImage'),
+                                       backgroundSize:self.$slideWidth+'px '+self.$slideHeight+'px'
+                                });
+                                self.slideRunnung = true; 
+                            self.positionSlices('left');
+                        }
+                    });
+                });
+            }
             if(self.options.transitionEffect == 'fadeBox')
             {
                 self.$itemWrapper.find('.razor-slice').css('opacity',0);
@@ -605,6 +678,121 @@
                                 });
                                 self.slideRunnung = true; 
                             self.positionSlices('left');
+                        }
+                    });
+                });
+            }
+            if(self.options.transitionEffect == 'scaterBox')
+            {
+                self.$itemWrapper.css({
+                    backgroundImage:'url('+self.$current.find('img').attr('src')+')',
+                    backgroundSize: self.$slideWidth+'px '+self.$slideHeight+'px',
+                    backgroundRepeat: 'no-repeat'
+                });
+
+                self.setImageToSlices(cur.find('img').attr('src')).positionImageOnSlices(); 
+               
+                self.positionSlices();
+            
+            
+                var randArr = range(0,self.total_slices-1,true);
+
+                randArr.forEach(function(sliceIndex,index){
+                   //var pos = self.slicePositionsArray[sliceIndex];
+                   var animationOn = {
+                            left : self.$slideWidth + getRandomInt(-9999,9999),
+                            top : self.$slideHeight + getRandomInt(-9999,9999)
+                        };
+                   var duration = (self.options.speed/self.total_slices)*(index+150);
+                    
+                    self.animateSlice(sliceIndex,animationOn,duration,1000,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                                /*self.$itemWrapper.css({
+                                       backgroundImage: ele.css('backgroundImage'),
+                                       backgroundSize:self.$slideWidth+'px '+self.$slideHeight+'px'
+                                });*/
+                                self.slideRunnung = true; 
+                            //self.positionSlices();
+                        }
+                    });
+                });
+            }
+            if(self.options.transitionEffect == 'checkbox')
+            {
+                self.$itemWrapper.css({
+                    backgroundImage:'url('+self.$current.find('img').attr('src')+')',
+                    backgroundSize: self.$slideWidth+'px '+self.$slideHeight+'px',
+                    backgroundRepeat: 'no-repeat'
+                });
+               self.$itemWrapper.find('.razor-slice').css('height',self.$slideHeight/self.sliceDim.y);
+                self.setImageToSlices(cur.find('img').attr('src')).positionImageOnSlices(); 
+               
+                self.positionSlices();
+            
+            
+                var randArr = range(0,self.total_slices-1,false);
+                var row = 1;
+                var counter = 0;
+                randArr.forEach(function(sliceIndex,index){
+                counter += 1;   
+                if(counter >= self.sliceDim.x+1)
+                {
+                    counter = 0;
+                    row += 1;
+                }
+                if(row%2==0){
+                    if(index%2==0) return;
+                }
+                else
+                {
+                  if(index%2!=0) return;  
+                }
+                    
+                   var animationOn = {
+                           height:0
+                        };
+                   var duration = (self.options.speed/self.total_slices)/2*index;
+                    
+                    self.animateSlice(sliceIndex,animationOn,duration,100,function(i,ele){
+                        if(index == randArr.length - 1)
+                        {
+                            console.log('first');
+                                /*inner loop*/
+                            var row = 1;
+                            var counter = 0;
+                            randArr.forEach(function(ssliceIndex,iindex){
+                             sliceIndex = ssliceIndex;
+                             index = iindex;
+                            counter+=1;   
+                            if(counter >= self.sliceDim.x+1)
+                            {
+                                counter = 0;
+                                row+=1;
+                            }
+
+                            if(row%2==0){
+                                if(index%2!=0) return;
+                            }
+                            else
+                            {
+                              if(index%2==0) return;  
+                            }
+
+                               var animationOn = {
+                                       height:0
+                                    };
+                               var duration = (self.options.speed/self.total_slices)/2*index;
+
+                                self.animateSlice(sliceIndex,animationOn,duration,100,function(i,ele){
+                                    if(index == randArr.length - 1)
+                                    {
+                                        console.log('ok');
+                                            self.slideRunnung = true; 
+                                    }
+                                });
+                            });
+                            /*inner loop end*/
                         }
                     });
                 });
