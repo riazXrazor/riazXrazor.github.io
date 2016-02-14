@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>ImgPos Plugin Demo</title>
+        <style>
+            #bgimg{
+                width: 150px;
+                height:150px;
+                background-image: url(img/2.jpg);
+                background-position: -1200px -500px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>ImgPos Plugin Demo</h1>
+        <div>
+            <h2>Original images</h2>
+            <img src="img/2.jpg" width="500"  />
+            <img src="img/1.jpg" width="500"  />
+        </div>
+        <h3>positions as percentage</h3>
+        <pre>
+            &#x3C;img class=&#x22;pos&#x22; data-posx=&#x22;50%&#x22; data-posy=&#x22;30%&#x22; data-height=&#x22;150&#x22; data-width=&#x22;150&#x22; src=&#x22;img/2.jpg&#x22; /&#x3E;
+            
+            &#x3C;script&#x3E; 
+                  $(function(){
+                       $(&#x27;img.pos&#x27;).imgpos();
+                  }); 
+          &#x3C;/script&#x3E;
+            
+        </pre>
+        <img class="pos" data-posx="50%" data-posy="30%" data-height="150" data-width="150" src="img/2.jpg" />
+        
+        <hr>
+        
+        <h3>different positions of same image </h3>
+        <pre>
+        &#x3C;img class=&#x22;pos&#x22; data-posx=&#x22;1200&#x22; data-posy=&#x22;500&#x22; data-height=&#x22;250&#x22; data-width=&#x22;250&#x22; height=&#x22;250&#x22; width=&#x22;250&#x22; src=&#x22;img/2.jpg&#x22; /&#x3E;
+        &#x3C;img class=&#x22;pos&#x22; data-posx=&#x22;1400&#x22; data-posy=&#x22;500&#x22; data-height=&#x22;250&#x22; data-width=&#x22;250&#x22; height=&#x22;250&#x22; width=&#x22;250&#x22; src=&#x22;img/2.jpg&#x22; /&#x3E;
+        &#x3C;img class=&#x22;pos&#x22; data-posx=&#x22;650&#x22; data-posy=&#x22;400&#x22; data-height=&#x22;250&#x22; data-width=&#x22;250&#x22; height=&#x22;250&#x22; src=&#x22;img/1.jpg&#x22; /&#x3E;
+        
+        &#x3C;script&#x3E; 
+                  $(function(){
+                       $(&#x27;img.pos&#x27;).imgpos();
+                  }); 
+          &#x3C;/script&#x3E;
+        
+        </pre>
+     
+        <img class="pos" data-posx="1200" data-posy="500" data-height="250" data-width="250" height="250" width="250" src="img/2.jpg" />
+        <img class="pos" data-posx="1400" data-posy="500" data-height="250" data-width="250" height="250" width="250" src="img/2.jpg" />
+        <img class="pos" data-posx="650" data-posy="400" data-height="250" data-width="250" height="250" src="img/1.jpg" />
+        
+        <hr>
+          <h3>ImgPos with just data-img-pos="true" no need to initilize with javascript </h3>
+        <pre>
+            &#x3C;img data-img-pos=&#x22;true&#x22; data-posx=&#x22;630&#x22; data-posy=&#x22;400&#x22; data-height=&#x22;350&#x22; data-width=&#x22;350&#x22; height=&#x22;250&#x22; src=&#x22;img/1.jpg&#x22; /&#x3E;
+        </pre>      
+        <img data-img-pos="true" data-posx="630" data-posy="400" data-height="350" data-width="350" height="250" src="img/1.jpg" />
+        <hr/>
+        
+        <h4>This is just a demo how you would do with 
+            <br>background image and css without the plugin.
+            <br>
+            <br>
+            
+            this is just for compairation
+        </h4>
+        
+        <pre>
+        &#x3C;style&#x3E;
+            #bgimg{
+                width: 150px;
+                height:150px;
+                background-image: url(img/2.jpg);
+                background-position: -1200px -500px;
+            }
+        &#x3C;/style&#x3E;
+        &#x3C;div id=&#x22;bgimg&#x22;&#x3E;&#x3C;/div&#x3E;
+        </pre>
+        
+        <div id="bgimg"></div>
+        <script src="js/jquery-1.12.0.min.js"></script>
+        <script src="js/imgpos.jquey.min.js"></script>
+        <script>
+            $(function(){
+               $('img.pos').imgpos({height:250,width:250});
+            });        
+        </script>
+    </body>
+</html>
